@@ -10,6 +10,8 @@ const Recorder = (props) => {
       blobPropertyBag: { type: 'audio/webm' },
     });
 
+  console.log("Recording status >> ", status);
+
   return (
     <React.Fragment>
     {status=='stopped' || status == 'idle' && status != 'paused' ? (
