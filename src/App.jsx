@@ -6,6 +6,7 @@ import Recorder from "./components/Recorder/recorder";
 import Transcriber from "./components/Transcriber/transcriber";
 import Summarizer from "./components/Summarizer/summarizer";
 
+
 class CustomFormData extends FormData {
   getHeaders() {
     return {};
@@ -13,10 +14,11 @@ class CustomFormData extends FormData {
 }
 
 function App() {
-  const [audioChunks, setAudioChunks] = useState([]);
+  const [audioBlob, setAudioBlob] = useState(null);
   const [selectedFile, setSelectedFile] = useState(null);
   const [transcribedText, setTranscribedText] = useState("");
   const [summarizedText, setSummarizedText] = useState("");
+  const [isloading, setIsLoading] = useState(false);
 
   const configuration = new Configuration({
     apiKey: import.meta.env.VITE_OPENAI_API_KEY,
@@ -28,7 +30,7 @@ function App() {
   const openai = new OpenAIApi(configuration);
 
   const initialize = () => {
-    setAudioChunks([]);
+    setAudioBlob(null);
     setSelectedFile(null);
     setTranscribedText("");
     setSummarizedText("");
@@ -38,21 +40,20 @@ function App() {
     setSelectedFile(file);
   };
 
-  const handleAudioChunks = (chunks) => {
-    console.log("handleAudioChunks", chunks.length)
-    setAudioChunks(chunks);
+  const handleAudioBlob = (blob) => {
+    console.log("handleAudioBlob", blob)
+    setAudioBlob(blob);
   };
 
   const transcribeAudio = async () => {
     try {
+      setIsLoading(true);
       let response = null;
       if (selectedFile) {
         console.log("selectedFile exists", selectedFile instanceof File);
         response = await openai.createTranscription(selectedFile, "whisper-1");
       } else {
-        console.log("transcribeAudio", audioChunks.length);
-        const blob = new Blob(audioChunks, { type: "audio/webm" });
-        const audioFile = new File([blob], 'recorded_audio.webm', { type: 'audio/webm' });
+        const audioFile = new File([audioBlob], 'recorded_audio.webm', { type: 'audio/webm' });
         console.log("audioFile exists", audioFile instanceof File);
         response = await openai.createTranscription(audioFile, "whisper-1");
       }
@@ -64,12 +65,14 @@ function App() {
     } catch (error) {
       console.log("Error transcribing audio:", error);
     } finally {
-      setAudioChunks([]);
+      setAudioBlob(null);
+      setIsLoading(false);
     }
   };
 
   const summarize = async () => {
     try {
+      setIsLoading(true);
       const response = await openai.createCompletion({
         model: "text-davinci-003",
         prompt: `${transcribedText}\n\nTl;dr`,
@@ -86,6 +89,8 @@ function App() {
       console.log(response); // Handle the summarized text data here
     } catch (error) {
       console.log("Error summarizing text:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -105,8 +110,8 @@ function App() {
     <div className="app">
       <h1>AI Audio Summarizer</h1>
       <DropZone initialize={initialize} onFileDrop={handleFileSelect} />
-      {!selectedFile && <Recorder initialize={initialize} onStopRecording={handleAudioChunks} />}
-      {(audioChunks.length > 0 || selectedFile) &&
+      {!selectedFile && <Recorder onStopRecording={handleAudioBlob} />}
+      {(audioBlob || selectedFile) &&
         transcribedText.length === 0 && (
           <div>
             <div style={{ marginBottom: "10px" }}>

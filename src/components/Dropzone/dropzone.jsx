@@ -35,7 +35,9 @@ const DropZone = ({initialize, onFileDrop}) => {
   const { getRootProps, getInputProps, isDragActive, acceptedFiles } = useDropzone({
     onDrop: (files) => handleDrop(files, initialize, onFileDrop),
     onFileDialogCancel: () => onFileDialogCancel(initialize),
-    acceptedFiles: "audio/*", // Accept only audio files
+    accept: {
+      'audio/*' : ['.mp3', '.mp4', '.mpeg', '.mpga', '.m4a', '.wav', '.webm']
+    }, // Accept only audio files
     maxFiles: 1, // Limit to one file
     multiple: false,
   });
@@ -57,7 +59,7 @@ const DropZone = ({initialize, onFileDrop}) => {
           </p>
         ) : (
           <p className="dropzone-content">
-            Drag and drop audio file here, or click to select file
+            Drag and drop audio file here, or click to select file<br/>(Only *.mp3, *.mp4, *.mpeg, *.mpga, *.m4a, *.wav and *.webm audio will be accepted)
           </p>
         )}
       </div>
