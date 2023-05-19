@@ -39,7 +39,7 @@ const Recorder = (props) => {
         </div>
       </div>
     )}
-    {status == 'stopped' && <audio src={mediaBlobUrl} controls loop />}
+    {status == 'stopped' && <audio className='audio-container' src={mediaBlobUrl} controls loop />}
     </React.Fragment>
   )
 };
