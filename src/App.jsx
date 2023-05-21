@@ -1,17 +1,16 @@
 import { useState } from "react";
-import { Configuration, OpenAIApi } from "openai";
+import axios from 'axios';
 import "./App.css";
 import DropZone from "./components/Dropzone/dropzone";
 import Recorder from "./components/Recorder/recorder";
 import Transcriber from "./components/Transcriber/transcriber";
 import Summarizer from "./components/Summarizer/summarizer";
+import ReactLoading from 'react-loading';
 
-
-class CustomFormData extends FormData {
-  getHeaders() {
-    return {};
-  }
-}
+// eslint-disable-next-line react/prop-types
+const LoadingComp = ({ type, color }) => (
+  <ReactLoading type={type} color={color} height={'10%'} width={'10%'} />
+);
 
 function App() {
   const [audioBlob, setAudioBlob] = useState(null);
@@ -19,15 +18,6 @@ function App() {
   const [transcribedText, setTranscribedText] = useState("");
   const [summarizedText, setSummarizedText] = useState("");
   const [isloading, setIsLoading] = useState(false);
-
-  const configuration = new Configuration({
-    apiKey: import.meta.env.VITE_OPENAI_API_KEY,
-    formDataCtor: CustomFormData,
-  });
-  // Delete it
-  delete configuration.baseOptions.headers["User-Agent"];
-
-  const openai = new OpenAIApi(configuration);
 
   const initialize = () => {
     setAudioBlob(null);
@@ -37,6 +27,7 @@ function App() {
   }
 
   const handleFileSelect = (file) => {
+    console.log("handleFileSelect", file)
     setSelectedFile(file);
   };
 
@@ -50,16 +41,25 @@ function App() {
       setIsLoading(true);
       let response = null;
       if (selectedFile) {
-        console.log("selectedFile exists", selectedFile instanceof File);
-        response = await openai.createTranscription(selectedFile, "whisper-1");
-      } else {
-        const audioFile = new File([audioBlob], 'recorded_audio.webm', { type: 'audio/webm' });
-        console.log("audioFile exists", audioFile instanceof File);
-        response = await openai.createTranscription(audioFile, "whisper-1");
+        console.log("selectedFile", selectedFile)
+        let formData = new FormData();
+        formData.append('file', selectedFile);
+        formData.append('filename', selectedFile.name);
+        formData.append('mimetype', selectedFile.type);
+        response = await axios.post('http://localhost:3000/v1/openai/transcribe', 
+          formData, 
+          {
+          headers: {
+            'Content-Type': `multipart/form-data`,
+          }
+        });
       }
-      console.log(response);
-      if (response.error) {
-        throw new Error(response.error.message);
+      // } else {
+      //   const audioFile = new File([audioBlob], 'recorded_audio.webm', { type: 'audio/webm' });
+      // }
+      // console.log(response);
+      if (response.code) {
+        throw new Error(response.message);
       }
       setTranscribedText(response.data.text);
     } catch (error) {
@@ -73,17 +73,12 @@ function App() {
   const summarize = async () => {
     try {
       setIsLoading(true);
-      const response = await openai.createCompletion({
-        model: "text-davinci-003",
-        prompt: `${transcribedText}\n\nTl;dr`,
-        temperature: 0.7,
-        max_tokens: 60,
-        top_p: 1.0,
-        frequency_penalty: 0.0,
-        presence_penalty: 1,
-      });
-      if (response.error) {
-        throw new Error(response.error.message);
+      const response = await axios.post(
+        'http://localhost:3000/v1/openai/summarize', 
+        { text : transcribedText },
+      );
+      if (response.code) {
+        throw new Error(response.message);
       }
       setSummarizedText(response.data.choices[0].text);
       console.log(response); // Handle the summarized text data here
@@ -93,18 +88,6 @@ function App() {
       setIsLoading(false);
     }
   };
-
-  // const transcribeAudio = async () => {
-  //   setTranscribedText(
-  //     "Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes from sections 1.10.32 and 1.10.33 of 'de Finibus Bonorum et Malorum' (The Extremes of Good and Evil) by Cicero, written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first line of Lorem Ipsum, 'Lorem ipsum dolor sit amet..', comes from a line in section 1.10.32. The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for those interested. Sections 1.10.32 and 1.10.33 from 'de Finibus Bonorum et Malorum' by Cicero are also reproduced in their exact original form, accompanied by English versions from the 1914 translation by H. Rackham."
-  //   );
-  // };
-
-  // const summarize = async () => {
-  //   setSummarizedText(
-  //     "Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC."
-  //   );
-  // };
 
   return (
     <div className="app">
@@ -120,6 +103,7 @@ function App() {
             <button onClick={transcribeAudio}>Transcribe Audio</button>
           </div>
         )}
+      {isloading && <LoadingComp type={'spinningBubbles'} color={'#535bf2'} />}
       {transcribedText.length > 0 && (
         <div className="container">
           <Transcriber
@@ -129,7 +113,7 @@ function App() {
             <button className="button-container" onClick={summarize}>
               Summarize
             </button>
-            <button className="button-container" onClick={initialize}>
+            <button className="button-container" onClick={() => window.location.reload()}>
               Retry
             </button>
           </div>

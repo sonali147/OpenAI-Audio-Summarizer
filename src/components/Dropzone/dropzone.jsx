@@ -4,17 +4,17 @@ import './dropzone.css'
 
 // eslint-disable-next-line react/prop-types
 const DropZone = ({initialize, onFileDrop}) => {
-  const [myFiles, setMyFiles] = useState([])
+  const [myFile, setMyFile] = useState(null);
 
   const handleDrop = useCallback((acceptedFiles, initialize, onFileDrop) => {
     initialize();
     if (acceptedFiles.length === 1) {
-      setMyFiles([...myFiles, acceptedFiles[0]])
+      setMyFile(acceptedFiles[0])
       onFileDrop(acceptedFiles[0]);
     } else {
       console.log("Please select only one audio file.");
     }  
-  }, [myFiles])
+  }, [])
 
   const onFileDialogCancel = useCallback((initialize) => {
     // Handle the file selection dialog cancel event
@@ -29,10 +29,10 @@ const DropZone = ({initialize, onFileDrop}) => {
   // }
 
   const removeAll = () => {
-    setMyFiles([])
+    setMyFile(null)
   }
 
-  const { getRootProps, getInputProps, isDragActive, acceptedFiles } = useDropzone({
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop: (files) => handleDrop(files, initialize, onFileDrop),
     onFileDialogCancel: () => onFileDialogCancel(initialize),
     accept: {
@@ -40,14 +40,8 @@ const DropZone = ({initialize, onFileDrop}) => {
     }, // Accept only audio files
     maxFiles: 1, // Limit to one file
     multiple: false,
+    name: 'audio',
   });
-
-  const files = acceptedFiles.map((file) => (
-    <li key={file.path}>
-      {file.path} - {file.size} bytes
-      {/* <button onClick={removeFile(file)}>Remove File</button> */}
-    </li>
-  ));
 
   return (
     <div {...getRootProps({ className: "dropzone" })}>
@@ -64,10 +58,9 @@ const DropZone = ({initialize, onFileDrop}) => {
         )}
       </div>
       <aside>
-      {files.length > 0 && <h4>Files</h4>}
-      {files}
+        {myFile && (<p style={{color: '#535bf2'}}>{myFile.path} - {myFile.size} bytes</p>)}
       </aside>
-      {files.length > 0 && <button onClick={removeAll}>Remove</button>}
+      {myFile && <button onClick={removeAll}>Remove</button>}
     </div>
   );
 };
