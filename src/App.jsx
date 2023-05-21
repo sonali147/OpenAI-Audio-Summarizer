@@ -40,23 +40,25 @@ function App() {
     try {
       setIsLoading(true);
       let response = null;
+      let formData = new FormData();
       if (selectedFile) {
         console.log("selectedFile", selectedFile)
-        let formData = new FormData();
         formData.append('file', selectedFile);
         formData.append('filename', selectedFile.name);
         formData.append('mimetype', selectedFile.type);
-        response = await axios.post('http://localhost:3000/v1/openai/transcribe', 
+      } else {
+        const audioFile = new File([audioBlob], 'recorded_audio.webm', { type: 'audio/webm' });
+        formData.append('file', audioFile);
+        formData.append('filename', 'recorded_audio.webm');
+        formData.append('mimetype', 'audio/webm');
+      }
+      response = await axios.post('http://localhost:3000/v1/openai/transcribe', 
           formData, 
           {
           headers: {
             'Content-Type': `multipart/form-data`,
           }
         });
-      }
-      // } else {
-      //   const audioFile = new File([audioBlob], 'recorded_audio.webm', { type: 'audio/webm' });
-      // }
       // console.log(response);
       if (response.code) {
         throw new Error(response.message);
