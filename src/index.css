@@ -71,9 +71,19 @@ button:focus-visible {
   }
 }
 
+.transcribe-container-btn {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  margin: 10px;
+}
+
 .button-container {
   display: flex;
   gap: 10px; /* Adjust the gap value to set the desired space between the buttons */
+  padding: 10px;
+  margin: 10px;
 }
 
 .recording-section {
@@ -126,11 +136,6 @@ button:focus-visible {
   border: 2px #535bf2 solid;
   box-shadow: 0 2px 8px #747bff;
   border-radius: 12px;
-}
-
-.button-container {
-  padding: 10px;
-  margin: 10px;
 }
 
 .transcription-container {

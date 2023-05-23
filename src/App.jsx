@@ -102,7 +102,12 @@ function App() {
             <div style={{ marginBottom: "10px" }}>
               Audio Ready... Click to proceed !!!
             </div>
-            <button onClick={transcribeAudio}>Transcribe Audio</button>
+            <div className='transcribe-container-btn'>
+              <button className='button-container' onClick={transcribeAudio}>Transcribe Audio</button>
+              <button className='button-container' onClick={() => window.location.reload()}>
+                Retry
+              </button>
+            </div>
           </div>
         )}
       {isloading && <LoadingComp type={'spinningBubbles'} color={'#535bf2'} />}
