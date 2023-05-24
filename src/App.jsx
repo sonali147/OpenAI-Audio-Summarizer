@@ -52,7 +52,8 @@ function App() {
         formData.append('filename', 'recorded_audio.webm');
         formData.append('mimetype', 'audio/webm');
       }
-      response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/transcribe`, 
+      // response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/transcribe`, 
+      response = await axios.post(`/api/v1/openai/transcribe`, 
           formData, 
           {
           headers: {
@@ -76,7 +77,8 @@ function App() {
     try {
       setIsLoading(true);
       const response = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/summarize`, 
+        // 
+        `/api/v1/openai/summarize`, 
         { text : transcribedText },
       );
       if (response.code) {
