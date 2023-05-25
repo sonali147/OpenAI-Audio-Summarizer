@@ -58,19 +58,6 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
-}
-
 .transcribe-container-btn {
   display: flex;
   flex-direction: row;
@@ -163,4 +150,23 @@ button:focus-visible {
 
 .audio-container {
   margin-bottom: 20px;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+  .summary-container {
+    color: #000000;
+  }
+  .transcription-container {
+    color: #535bf2;
+  }
 }
