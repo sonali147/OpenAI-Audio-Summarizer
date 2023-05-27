@@ -113,16 +113,18 @@ button:focus-visible {
 .container {
   display: flex;
   align-items: center;
+  flex-direction: column;
 }
 
 .output-container {
   flex: 1;
   padding: 10px;
-  width: 350px;
+  width: 415px;
   height: 300px;
   border: 2px #535bf2 solid;
   box-shadow: 0 2px 8px #747bff;
   border-radius: 12px;
+  margin-bottom: 20px;
 }
 
 .transcription-container {
@@ -144,7 +146,7 @@ button:focus-visible {
 .divider {
   margin: 10px;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
 }
 

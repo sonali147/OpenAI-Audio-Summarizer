@@ -112,27 +112,30 @@ function App() {
             </div>
           </div>
         )}
-      {isloading && <LoadingComp type={'spinningBubbles'} color={'#535bf2'} />}
       {transcribedText.length > 0 && (
         <div className="container">
           <Transcriber
             transcribedText={transcribedText}
           />
-          <div className="divider">
+          {summarizedText.length === 0 && <div className="divider">
             <button className="button-container" onClick={summarize}>
               Summarize
             </button>
             <button className="button-container" onClick={() => window.location.reload()}>
               Retry
             </button>
-          </div>
-          <Summarizer
+          </div>}
+          {summarizedText.length > 0 && <Summarizer
             summarize={summarize}
             transcribedText={transcribedText}
             summarizedText={summarizedText}
-          />
+          />}
+          {summarizedText.length > 0 && <button className="button-container" onClick={() => window.location.reload()}>
+            Retry
+          </button>}
         </div>
       )}
+      {isloading && <LoadingComp type={'spinningBubbles'} color={'#535bf2'} />}
       <p className="footer">Powered by OpenAI</p>
     </div>
   );
