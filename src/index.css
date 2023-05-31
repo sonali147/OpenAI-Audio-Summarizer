@@ -171,3 +171,9 @@ button:focus-visible {
     color: #2d36e3;
   }
 }
+
+@media screen and (max-width: 767px) {
+  .output-container {
+    width: 90vw;
+  }
+}
