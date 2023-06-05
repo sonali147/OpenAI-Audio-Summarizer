@@ -5,6 +5,15 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AI Audio Summarizer</title>
+    <script>
+      // load this bundle only for browsers without MediaRecorder support
+      if (!window.MediaRecorder) {
+        console.log("here")
+        document.write(
+          decodeURI('%3Cscript defer src="/polyfill.js">%3C/script>')
+        )
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

@@ -2,10 +2,11 @@ import { useState } from "react";
 import axios from 'axios';
 import "./App.css";
 import DropZone from "./components/Dropzone/dropzone";
-import Recorder from "./components/Recorder/recorder";
+// import Recorder from "./components/Recorder/recorder";
 import Transcriber from "./components/Transcriber/transcriber";
 import Summarizer from "./components/Summarizer/summarizer";
 import ReactLoading from 'react-loading';
+import AudioRecorder from "./components/AudioRecoderPolyfill/recoder";
 
 // eslint-disable-next-line react/prop-types
 const LoadingComp = ({ type, color }) => (
@@ -18,6 +19,7 @@ function App() {
   const [transcribedText, setTranscribedText] = useState("");
   const [summarizedText, setSummarizedText] = useState("");
   const [isloading, setIsLoading] = useState(false);
+  console.log(audioBlob);
 
   const initialize = () => {
     setAudioBlob(null);
@@ -97,8 +99,9 @@ function App() {
     <div className="app">
       <h1>AI Audio Summarizer</h1>
       <DropZone initialize={initialize} onFileDrop={handleFileSelect} />
-      {!selectedFile && <Recorder onStopRecording={handleAudioBlob} />}
-      {(audioBlob || selectedFile) &&
+      {/* {!selectedFile && <Recorder onStopRecording={handleAudioBlob} />} */}
+      {!selectedFile && <AudioRecorder onStopRecording={handleAudioBlob} />}
+      {(audioBlob != null || selectedFile) &&
         transcribedText.length === 0 && (
           <div>
             <div style={{ marginBottom: "10px" }}>
