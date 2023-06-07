@@ -55,18 +55,21 @@ function App() {
         formData.append('mimetype', 'audio/webm');
       }
       // response = await axios.post(`${import.meta.env.VITE_BACKEND_URL}/transcribe`, 
-      response = await axios.post(`/api/v1/openai/transcribe`, 
+      // response = await axios.post(`/api/v1/openai/transcribe`, 
+      response = await axios.post(`/api/openai-transcribe`,
           formData, 
           {
           headers: {
             'Content-Type': `multipart/form-data`,
           }
         });
-      // console.log(response);
-      if (response.code) {
+      console.log(response);
+      // if (response.code) {
+      if (response.status !== 200) {
         throw new Error(response.message);
       }
-      setTranscribedText(response.data.text);
+      // setTranscribedText(response.data.text);
+      setTranscribedText(response.data.message);
     } catch (error) {
       console.log("Error transcribing audio:", error);
     } finally {
@@ -79,14 +82,21 @@ function App() {
     try {
       setIsLoading(true);
       const response = await axios.post(
-        // 
-        `/api/v1/openai/summarize`, 
+        // `/api/v1/openai/summarize`,  
+        `/api/summarize`, 
         { text : transcribedText },
+        {
+          headers: {
+            'Content-Type': `application/json`,
+          }
+        }
       );
-      if (response.code) {
+      // if (response.code) {
+      if (response.status !== 200) {
         throw new Error(response.message);
       }
-      setSummarizedText(response.data.choices[0].text);
+      // setSummarizedText(response.data.choices[0].text);
+      setSummarizedText(response.data.message);
       console.log(response); // Handle the summarized text data here
     } catch (error) {
       console.log("Error summarizing text:", error);
