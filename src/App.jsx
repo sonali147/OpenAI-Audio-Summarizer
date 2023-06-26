@@ -22,7 +22,6 @@ function App() {
   const [completionPrompt, setCompletionPrompt] = useState("Create action items for this meeting");
   const [completionText, setCompletionText] = useState("");
   const [isloading, setIsLoading] = useState(false);
-  console.log(audioBlob);
 
   const initialize = () => {
     setAudioBlob(null);

@@ -127,6 +127,32 @@ button:focus-visible {
   margin-bottom: 20px;
 }
 
+.prompt-container {
+  flex: 1;
+  padding: 10px;
+  width: 415px;
+  height: 300px;
+  /* border: 2px #535bf2 solid;
+  box-shadow: 0 2px 8px #747bff;
+  border-radius: 12px;
+  margin-bottom: 20px; */
+}
+
+.text-area {
+  /* -webkit-box-shadow: inset 2px 2px 2px 0px #747bff;
+  -moz-box-shadow: inset 2px 2px 2px 0px #747bff; */
+  box-shadow: inset 4px 4px 2px 0px #747bff;
+  width: 415px;
+  height: 30px;
+  margin: 10px;
+  overflow: auto;
+  padding: 7px 10px;
+  font-family: tahoma;
+  font-size: 16px;
+  border-radius: 12px;
+  border: 1px solid #747bff;
+}
+
 .transcription-container {
   font-size: 14px;
   color: #a5aaff;
@@ -174,6 +200,12 @@ button:focus-visible {
 
 @media screen and (max-width: 767px) {
   .output-container {
+    width: 90vw;
+  }
+  .prompt-container {
+    width: 90vw;
+  }
+  .text-area {
     width: 90vw;
   }
 }
