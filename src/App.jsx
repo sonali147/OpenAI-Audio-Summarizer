@@ -7,6 +7,7 @@ import Transcriber from "./components/Transcriber/transcriber";
 import Summarizer from "./components/Summarizer/summarizer";
 import ReactLoading from 'react-loading';
 import AudioRecorder from "./components/AudioRecoderPolyfill/recoder";
+import Completion from "./components/OpenAICompletion/completion";
 
 // eslint-disable-next-line react/prop-types
 const LoadingComp = ({ type, color }) => (
@@ -18,6 +19,8 @@ function App() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [transcribedText, setTranscribedText] = useState("");
   const [summarizedText, setSummarizedText] = useState("");
+  const [completionPrompt, setCompletionPrompt] = useState("Create action items for this meeting");
+  const [completionText, setCompletionText] = useState("");
   const [isloading, setIsLoading] = useState(false);
   console.log(audioBlob);
 
@@ -105,6 +108,31 @@ function App() {
     }
   };
 
+  const createCompletion = async () => {
+    try {
+      setIsLoading(true);
+      const response = await axios.post(
+        `/api/openai-completion`, 
+        { prompt: completionPrompt, text : summarizedText },
+        {
+          headers: {
+            'Content-Type': `application/json`,
+          }
+        }
+      );
+      // if (response.code) {
+      if (response.status !== 200) {
+        throw new Error(response.message);
+      }
+      setCompletionText(response.data.message);
+      console.log(response); // Handle the summarized text data here
+    } catch (error) {
+      console.log("Error creating openai completion text:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
   return (
     <div className="app">
       <h1>AI Audio Summarizer</h1>
@@ -142,8 +170,20 @@ function App() {
             summarize={summarize}
             transcribedText={transcribedText}
             summarizedText={summarizedText}
+            completionPrompt={completionPrompt}
+            setCompletionPrompt={setCompletionPrompt}
+            // suppressContentEditableWarning={true}
           />}
-          {summarizedText.length > 0 && <button className="button-container" onClick={() => window.location.reload()}>
+          {summarizedText.length > 0 && completionText.length === 0 && <div className="divider">
+            <button className="button-container" onClick={createCompletion}>
+              Create Completion
+            </button>
+            <button className="button-container" onClick={() => window.location.reload()}>
+              Retry
+            </button>
+          </div>}
+          {completionText.length > 0 && <Completion completionText={completionText} />}
+          {completionText.length > 0 && <button className="button-container" onClick={() => window.location.reload()}>
             Retry
           </button>}
         </div>

@@ -11,6 +11,17 @@ const Summarizer = (props) => {
           )}
         </div>
       )}
+      {props.summarizedText.length > 0 && (
+        <div className="output-container">
+          <div 
+            className="summary-container" 
+            contentEditable={true} 
+            value={props.completionPrompt}
+            onInput={(e) => props.setCompletionPrompt(e.currentTarget.textContent)}
+            suppressContentEditableWarning={true}
+          />
+        </div>
+      )}
     </React.Fragment>
   );
 };
