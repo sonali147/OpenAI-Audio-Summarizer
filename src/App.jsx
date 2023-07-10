@@ -21,6 +21,7 @@ function App() {
   const [summarizedText, setSummarizedText] = useState("");
   const [completionPrompt, setCompletionPrompt] = useState("Create action items for this meeting");
   const [completionText, setCompletionText] = useState("");
+  const [completionList, setCompletionList] = useState([]);
   const [isloading, setIsLoading] = useState(false);
 
   const initialize = () => {
@@ -123,6 +124,7 @@ function App() {
       if (response.status !== 200) {
         throw new Error(response.message);
       }
+      setCompletionList(response.data.response_list);
       setCompletionText(response.data.message);
       console.log(response); // Handle the summarized text data here
     } catch (error) {
@@ -158,6 +160,9 @@ function App() {
             transcribedText={transcribedText}
           />
           {summarizedText.length === 0 && <div className="divider">
+            <button className="button-container" onClick={() => navigator.clipboard.writeText(transcribedText)}>
+              Copy to Clipboard
+            </button>
             <button className="button-container" onClick={summarize}>
               Summarize
             </button>
@@ -174,6 +179,9 @@ function App() {
             // suppressContentEditableWarning={true}
           />}
           {summarizedText.length > 0 && completionText.length === 0 && <div className="divider">
+            <button className="button-container" onClick={() => navigator.clipboard.writeText(summarizedText)}>
+              Copy to Clipboard
+            </button>
             <button className="button-container" onClick={createCompletion}>
               Create Completion
             </button>
@@ -181,7 +189,7 @@ function App() {
               Retry
             </button>
           </div>}
-          {completionText.length > 0 && <Completion completionText={completionText} />}
+          {completionText.length > 0 && <Completion completionText={completionText} completionList={completionList}/>}
           {completionText.length > 0 && <button className="button-container" onClick={() => window.location.reload()}>
             Retry
           </button>}

@@ -120,7 +120,7 @@ button:focus-visible {
   flex: 1;
   padding: 10px;
   width: 415px;
-  height: 300px;
+  /* height: 300px; */
   border: 2px #535bf2 solid;
   box-shadow: 0 2px 8px #747bff;
   border-radius: 12px;
@@ -179,6 +179,11 @@ button:focus-visible {
   margin-bottom: 20px;
 }
 
+.share-modal {
+  width: 100px;
+  height: 50px;
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;
@@ -206,6 +211,9 @@ button:focus-visible {
     width: 90vw;
   }
   .text-area {
+    width: 90vw;
+  }
+  .share-modal {
     width: 90vw;
   }
 }
